@@ -1,9 +1,16 @@
 import { Router, Request, Response } from "express";
-import { UserModel } from "../models/User";
+import { UserModel, UserValidator } from "../models/User";
+import { extractValidatorErrorMessages } from "../services/validation";
 
 const authRouter: Router = Router();
 
 authRouter.post("/register", async (req: Request, res: Response) => {
+  const [isError, error] = UserValidator(req.body);
+  
+  if(isError && !!error) {
+    res.status(400).send(extractValidatorErrorMessages(error));
+  }
+  
   const { name, email, password } = req.body;
 
   const newUser = new UserModel({

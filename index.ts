@@ -2,6 +2,7 @@ import express from "express";
 import mongoose, { CallbackError } from "mongoose";
 import { authRouter } from "./src/routers/auth";
 import dotenv from "dotenv";
+import { config } from "./src/services/config";
 
 const app = express();
 dotenv.config();
@@ -15,7 +16,7 @@ app.use("/api/user/", authRouter);
 
 
 // DB
-mongoose.connect(process.env.MONGO as string, (error: CallbackError) => {
+mongoose.connect(config().db.connection, (error: CallbackError) => {
   if (error) {
     console.error(error);
     return;
@@ -26,6 +27,6 @@ mongoose.connect(process.env.MONGO as string, (error: CallbackError) => {
 
 
 // Start the server
-app.listen(process.env.PORT, () => {
+app.listen(config().app.port, () => {
   console.log("listening on port 3000");
 });
