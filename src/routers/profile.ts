@@ -7,7 +7,7 @@ profileRouter.use(verifyToken);
 
 profileRouter.get(
   "/me/",
-  async (req: Request, res: Response): Promise<Response> => {
+  async (_: Request, res: Response): Promise<Response> => {
     const { id } = res?.locals?.meta;
     
     if (!id) {
