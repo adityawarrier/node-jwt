@@ -11,4 +11,17 @@ const extractValidatorErrorMessages = (
   };
 };
 
-export { extractValidatorErrorMessages };
+const schemaValidator = <T>(
+  object: T,
+  schema: Joi.ObjectSchema<T>
+): [boolean, Joi.ValidationError | null] => {
+  const { error } = schema.validate(object, { abortEarly: false });
+
+  if (error) {
+    return [true, error];
+  }
+
+  return [false, null];
+};
+
+export { extractValidatorErrorMessages, schemaValidator };

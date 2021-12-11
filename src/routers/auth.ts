@@ -1,11 +1,11 @@
 import { Router, Request, Response } from "express";
-import { UserModel, UserValidator } from "../models/User";
-import { extractValidatorErrorMessages } from "../services/validation";
+import { UserModel, userSchemaValidator } from "../models/User";
+import { extractValidatorErrorMessages, schemaValidator } from "../services/validation";
 
 const authRouter: Router = Router();
 
 authRouter.post("/register", async (req: Request, res: Response) => {
-  const [isError, error] = UserValidator(req.body);
+  const [isError, error] = schemaValidator(req.body, userSchemaValidator);
   
   if(isError && !!error) {
     res.status(400).send(extractValidatorErrorMessages(error));
