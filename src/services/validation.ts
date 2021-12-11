@@ -1,8 +1,13 @@
 import Joi from "joi";
 
+interface IValidationError {
+  status: string;
+  message: string[];
+}
+
 const extractValidatorErrorMessages = (
   error: Joi.ValidationError
-): { status: string; message: string[] } => {
+): IValidationError => {
   const { details } = error;
 
   return {
@@ -14,11 +19,11 @@ const extractValidatorErrorMessages = (
 const schemaValidator = <T>(
   object: T,
   schema: Joi.ObjectSchema<T>
-): [boolean, Joi.ValidationError | null] => {
+): [boolean, IValidationError | null] => {
   const { error } = schema.validate(object, { abortEarly: false });
 
   if (error) {
-    return [true, error];
+    return [true, extractValidatorErrorMessages(error)];
   }
 
   return [false, null];

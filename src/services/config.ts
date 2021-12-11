@@ -5,6 +5,9 @@ interface IConfig {
   db: {
     connection: string;
   };
+  token: {
+    secret: string;
+  };
 }
 
 const config = (): IConfig => ({
@@ -13,6 +16,9 @@ const config = (): IConfig => ({
   },
   db: {
     connection: process?.env?.DB_CONNECT ?? '',
+  },
+  token: {
+    secret: process?.env?.TOKEN_SECRET ?? '',
   },
 });
 
