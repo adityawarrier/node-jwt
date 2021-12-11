@@ -1,8 +1,9 @@
 import express from "express";
-import mongoose, { CallbackError } from "mongoose";
-import { authRouter } from "./src/routers/auth";
 import dotenv from "dotenv";
+import mongoose, { CallbackError } from "mongoose";
 import { config } from "./src/services/config";
+import { authRouter } from "./src/routers/auth";
+import { profileRouter } from "./src/routers/profile";
 
 const app = express();
 dotenv.config();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // ROUTERS
 app.use("/api/user/", authRouter);
+app.use("/api/profile/", profileRouter);
 
 
 // DB

@@ -1,13 +1,11 @@
 import { Router, Request, Response } from "express";
+import { AuthService } from "../services/auth";
+import { schemaValidator } from "../services/validation";
 import {
   userLoginSchemaValidator,
   UserModel,
   userSchemaValidator,
 } from "../models/User";
-import { schemaValidator } from "../services/validation";
-import bcryptjs from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { config } from "../services/config";
 
 const authRouter: Router = Router();
 
@@ -36,15 +34,11 @@ authRouter.post(
       return;
     }
 
-    // Hash the user's password
-    const salt = await bcryptjs.genSalt();
-    const hashedPassword = await bcryptjs.hash(password, salt);
-
     // Create a new user
     const newUser = new UserModel({
       name,
       email,
-      password: hashedPassword,
+      password: await AuthService.hashPassword(password),
     });
 
     try {
@@ -89,7 +83,7 @@ authRouter.post(
     }
 
     // check if the password is valid
-    const isPasswordValid = await bcryptjs.compare(
+    const isPasswordValid = await AuthService.validatePassword(
       password,
       existingUser.password
     );
@@ -102,10 +96,11 @@ authRouter.post(
       return;
     }
 
-    const token = jwt.sign(
-      { id: existingUser._id, name: existingUser.name },
-      config().token.secret
-    );
+    const token = AuthService.createToken({
+      id: existingUser._id,
+      name: existingUser.name,
+    });
+    
     res.status(200).send({
       status: "Success",
       message: "Logged in",
